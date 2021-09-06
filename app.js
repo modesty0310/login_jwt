@@ -28,6 +28,9 @@ app.use(express.urlencoded());
 app.use(cookieParser());
 app.use(passport.initialize());
 
+app.use('/', require('./routes/index'));
+app.use('/auth', require('./routes/auth'));
+
 app.use(function(req,res,next) {
   const error = new Error(`${req.method} ${req.url} 라우터가 없습니다`);
   error.status = 404;
@@ -35,6 +38,8 @@ app.use(function(req,res,next) {
 });
 
 app.use(function(err,req,res,next) {
+  res.locals.message = err.message;
+  res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
   // render the error page
   res.status(err.status || 500);
   res.render('error');
