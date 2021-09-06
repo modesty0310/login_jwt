@@ -7,20 +7,26 @@ const router = express.Router();
 
 router.post('/join', async (req, res, next) => {
   const { email, nick, password } = req.body;
-  try {
-    const exUser = User.find({email : email});
-    if (exUser) return res.redirect('/join?error=exist');
-    const hash = await bcrypt.hash(password, 12);
-    await User.create({
-      email: email,
-      nickName : nick,
-      password: password,
-    });
-    return res.redirect('/')
-  } catch (err) {
-    console.error(err);
-    return next(err);
-  }
-});
+  User.findOne({email})
+    .then(user => {
+      console.log(user);
+      if (user) return res.redirect('/join?error=exist');
+      const newUser = new User(req.body);
+      newUser.save(err => {
+        if(err) console.error(err);
+        return res.status(200).json({success: true});
+      })
+    })
+    .catch(err => console.error(err))
+})
 
 module.exports = router;
+
+// const hash = bcrypt.hash(password, 12);
+//       User.create({
+//         email: email,
+//         nick : nick,
+//         password: hash,
+//       })
+//       .then(() => res.redirect('/'))
+//       .catch(err => console.error(err))
