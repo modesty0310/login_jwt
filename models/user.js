@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwt = require("jsonwebtoken");
 
 const userSchema = mongoose.Schema({
   nick: {
@@ -15,11 +16,17 @@ const userSchema = mongoose.Schema({
     type: String,
     minLength: 5,
   },
+  token: {
+    type: String
+  },
+  tokenExp: {
+    type: Number,
+  },
 });
 
 userSchema.pre("save", function (next) { 
   //~.pre()를 통해 해당 스키마에 데이터가 저장되기전(.save) 수행할 작업들을 지정해줄 수 있다.
-  var user = this;
+  let user = this;
   if (user.isModified("password")) { //패스워드가 변경될때만 해싱작업이 처리됨.
     bcrypt.genSalt(10, (err, salt) => {
       if (err) return next(err);
@@ -34,10 +41,20 @@ userSchema.pre("save", function (next) {
   }
 });
 
-userSchema.methods.checkPassword = function(guess,done){
-  bcrypt.compare(guess,this.password,function(err,isMatch){
-      done(err,isMatch);
-  });
+userSchema.methods.checkPassword = function(plainPassword){
+  return bcrypt
+    .compare(plainPassword, this.password)
+    .then(isMatch => isMatch)
+    .catch(err => err);
+};
+
+userSchema.methods.generateToken = function () {
+  // let user = this;
+  const token = jwt.sign(this._id.toHexString(), "secretToken");
+  this.token = token;
+  return this.save()
+    .then((user) => user)
+    .catch((err) => err);
 };
 
 
