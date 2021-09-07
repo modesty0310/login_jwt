@@ -57,5 +57,17 @@ userSchema.methods.generateToken = function () {
     .catch((err) => err);
 };
 
+userSchema.statics.findByToken = function (token) {
+  let user = this;
+  //secretToken을 통해 user의 id값을 받아오고 해당 아이디를 통해
+  //Db에 접근해서 유저의 정보를 가져온다
+  return jwt.verify(token, "secretToken", function (err, decoded) {
+    return user
+      .findOne({ _id: decoded, token: token })
+      .then((user) => user)
+      .catch((err) => err);
+  });
+};
+
 
 module.exports = mongoose.model('User', userSchema)

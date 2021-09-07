@@ -4,6 +4,7 @@ const path = require('path');
 const nunjucks = require('nunjucks');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
+const session = require('express-session');
 require('dotenv').config();
 
 const app = express();
@@ -26,8 +27,6 @@ app.use(express.static(path.join(__dirname,'public')));
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
-app.use(passport.initialize());
-
 
 app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));

@@ -1,14 +1,24 @@
+const jwt = require("jsonwebtoken");
+const User = require('../models/user')
+
 const jwtMiddleware = (req, res, next) => {
   // 클라이언트 쿠키에서 token을 가져옵니다.
-  let token = req.cookies.x_auth;
-
+  // try {
+    let token = req.cookies.x_auth;
+  //   req.decoded = jwt.verify(token, "secretToken");
+  //   return next();
+  // } catch (error) {
+  //   console.log(error);
+  // }
+  
   // token을 decode 합니다.
-  jwt.verify(token, SECRET_TOKEN, (error, decoded) => {
+  jwt.verify(token, "secretToken", (error, decoded) => {
     if (error) {
       return res
         .status(500)
         .json({ error: "token을 decode하는 데 실패 했습니다." });
     }
+    
     // decoded에는 jwt를 생성할 때 첫번째 인자로 전달한 객체가 있습니다.
     // { random: user._id } 형태로 줬으므로 _id를 꺼내 씁시다
     User.findOne({ _id: decoded.UserId }, (error, user) => {
@@ -27,5 +37,8 @@ const jwtMiddleware = (req, res, next) => {
       }
       next();
     });
-  });
+  }
+  );
 };
+
+module.exports = jwtMiddleware;

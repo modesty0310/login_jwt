@@ -1,6 +1,6 @@
 const express = require('express');
+const passport = require('passport');
 const User = require('../models/user');
-const middle = require('./middleware');
 
 const router = express.Router();
 
@@ -20,6 +20,7 @@ router.post('/join', async (req, res, next) => {
 })
 
 router.post('/login', (req, res, next) => {
+  passport.authenticate('local', (authError, user, info) => {})
   const {email, password} = req.body;
   User.findOne({email})
     .then(user => {
@@ -30,7 +31,7 @@ router.post('/login', (req, res, next) => {
         .then(user => {
           res.cookie("x_auth", user.token)
           .status(200)
-          .render('main');
+          .redirect('/');
         })
       })
     })
