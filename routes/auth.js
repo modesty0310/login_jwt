@@ -1,14 +1,11 @@
 const express = require('express');
-const passport = require('passport');
 const User = require('../models/user');
-
 const router = express.Router();
 
 router.post('/join', async (req, res, next) => {
   const email = req.body.email;
   User.findOne({email})
     .then(user => {
-      console.log(user);
       if (user) res.redirect('/join?error=exist');
       const newUser = new User(req.body);
       newUser.save(err => {
@@ -20,7 +17,6 @@ router.post('/join', async (req, res, next) => {
 })
 
 router.post('/login', (req, res, next) => {
-  passport.authenticate('local', (authError, user, info) => {})
   const {email, password} = req.body;
   User.findOne({email})
     .then(user => {

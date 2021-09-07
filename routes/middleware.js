@@ -14,7 +14,7 @@ const jwtMiddleware = (req, res, next) => {
   // token을 decode 합니다.
   if(!token) return next();
   User.findOne({token})
-    .then(user => {console.log(user);
+    .then(user => {
       req.user = user;
       next();
     })
