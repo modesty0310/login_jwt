@@ -9,8 +9,7 @@ router.get('/join', (req,res,next) => {
 })
 
 router.get('/', jwt, (req,res,next) => {
-  console.log(req.cookies);
-  res.send(req.cookies.x_auth)
+  res.render('main', {user: req.user})
   }
 )
 

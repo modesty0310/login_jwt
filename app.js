@@ -4,7 +4,6 @@ const path = require('path');
 const nunjucks = require('nunjucks');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
-const session = require('express-session');
 require('dotenv').config();
 
 const app = express();
