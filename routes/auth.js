@@ -33,4 +33,9 @@ router.post('/login', (req, res, next) => {
     })
 })
 
+router.get('/logout', (req,res) => {
+  res.clearCookie('x_auth')
+  res.render('main')
+})
+
 module.exports = router;
